@@ -1,0 +1,96 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  MENTOR  @map("mentor")
+  STUDENT @map("student")
+  ADMIN   @map("admin")
+  ASSISTANT  @map("assistant")
+
+  @@map("_Role")
+}
+
+enum AuthProvider {
+  GOOGLE @map("google")
+
+  @@map("_Auth_provider")
+}
+
+model User {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  surname      String?
+  email        String        @unique
+  password     String?
+  authProvider AuthProvider?
+  role         UserRole      @default(STUDENT)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  Student Student?
+  Mentor  Mentor?
+}
+
+model Student {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String   @unique @db.ObjectId
+  profile   Json?    @map("profile_student")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  enrollments Enrollment[] @relation("StudentEnrollments")
+}
+
+model Course {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  title       String @unique
+  description String
+  tags        String
+  linkVideo   String @map("link_video")
+  finalGrade  Float? @map("final_grade")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mentorId    String?      @map("mentor_id") @db.ObjectId
+  mentor      Mentor?      @relation("MentorCourses", fields: [mentorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  enrollments Enrollment[] @relation("CourseEnrollments")
+
+  @@index([mentorId, tags, title])
+}
+
+model Enrollment {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  courseId     String   @map("course_id") @db.ObjectId
+  studentId    String   @map("student_id") @db.ObjectId
+  finalProject Json?    @map("final_project")
+  status       Boolean
+  review       String?  @map("review")
+  grade        Float?   @map("grade")
+
+  student Student @relation("StudentEnrollments", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  course  Course  @relation("CourseEnrollments", fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([courseId, studentId])
+}
+
+model Mentor {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  profile   Json?    @map("profile_mentor")
+  userId    String   @unique @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  courses Course[] @relation("MentorCourses")
+}

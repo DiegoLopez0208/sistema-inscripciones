@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-color-light: #f9f9f9;
+  --bg-color-dark: #2d2d2d;
+}
+
+body {
+  background-color: var(--bg-color-light);
+  transition: background-color 0.3s ease-in-out;
+}
+
+.dark {
+  --bg-color: var(--bg-color-dark);
+}
+
+.light {
+  --bg-color: var(--bg-color-light);
+}
+
+.dark body {
+  background-color: var(--bg-color);
+}
+
+.courseCard {
+  display: flex;
+  border: solid 3px;
+  border-color: #246bfd;
+  border-radius: 0.3rem;
+  padding: 0.3rem;
+  max-width: 25rem;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 1.5rem;
+  user-select: none;
+  line-height: 1;
+}
+
+h1 {
+  font-size: 5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.3rem;
+}
+
+h4 {
+  font-size: 1.1rem;
+}
+
+img {
+  margin-left: 1.25rem;
+  margin-right: 1.25rem;
+}

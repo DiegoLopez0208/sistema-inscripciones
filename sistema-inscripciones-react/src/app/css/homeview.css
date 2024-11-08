@@ -1,0 +1,11 @@
+h1,
+h2 {
+  color: white;
+}
+
+.mainpage {
+  background-image: url(../../../public/background/fondoHome.webp);
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100vw;
+}
